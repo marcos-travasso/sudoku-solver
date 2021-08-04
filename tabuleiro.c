@@ -60,6 +60,7 @@ int verificar_quantidade_grid(int** tabuleiro, int grid_linha, int grid_coluna){
 
 int verificar_tabuleiro(int** tabuleiro, int linha, int coluna){
     int numero_colocado = tabuleiro[linha][coluna];
+    if(numero_colocado == 0) { return 0; }
     int i, j;
 
     //Verificar linha e coluna
@@ -90,7 +91,7 @@ int verificar_tabuleiro(int** tabuleiro, int linha, int coluna){
 void preencher_tabuleiro(int** tabuleiro, int numero_por_grid){
     int i, j, linha_temp, coluna_temp, numero_temp;
     int** tabuleiro_auxiliar = criar_tabuleiro();
-    srand(time(NULL));
+    //srand(time(NULL));
 
     for(i = 0; i < 3; i++){
         for(j = 0; j < 3; j++){
@@ -110,4 +111,47 @@ void preencher_tabuleiro(int** tabuleiro, int numero_por_grid){
     }
 
     destruir_tabuleiro(tabuleiro_auxiliar);
+}
+
+int resolver_celula(int** tabuleiro_base, int** tabuleiro_resolver, int linha, int coluna){
+    //Caso em que estou tratando com um número fixo
+    int valor_atual = tabuleiro_resolver[linha][coluna];
+    if(tabuleiro_base[linha][coluna] != 0){
+        //Casos diferentes do último elemento da coluna antes do fim da linha
+        if(coluna != 8){ return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna + 1); }
+        //Caso em que é o fim da linha
+        else if(linha != 8){ return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha + 1, 0); }
+        //Último elemento
+        return 1;
+    }
+
+    //Caso a tratar números a resolver
+    //Primeiro verificar se posso incrementar e manter menor do que 9
+    if(tabuleiro_resolver[linha][coluna] < 9){
+        (tabuleiro_resolver[linha][coluna])++;
+        //Caso dê certo (não dê conflito na verificação), ele passa pro próximo (se houver próximo)
+        if(verificar_tabuleiro(tabuleiro_resolver, linha, coluna)){
+            int possivel = 0;
+            if(coluna != 8) { possivel = resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna + 1); }
+            else if(linha != 8) { possivel = resolver_celula(tabuleiro_base, tabuleiro_resolver, linha + 1, 0); }
+
+            if(possivel) { return 1; }
+
+        }
+        //Caso não possa ser preenchido com esse valor, a função é chamada novamente para essa posição
+        return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna);
+    }
+    //Caso já seja 9, ele tem que refazer como 0
+    tabuleiro_resolver[linha][coluna] = 0;
+    return 0;
+}
+
+void resolver_sudoku(int** tabuleiro){
+    int** tabuleiro_resolver = criar_tabuleiro();
+    int possivel;
+    copiar_tabuleiro(tabuleiro, tabuleiro_resolver);
+
+    possivel = resolver_celula(tabuleiro, tabuleiro_resolver, 0, 0);
+    printf("Resultado: %d\n", possivel);
+    copiar_tabuleiro(tabuleiro_resolver, tabuleiro);
 }
