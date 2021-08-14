@@ -119,7 +119,23 @@ void testar_resolucao(){
     tabuleiro[8][8] = 7;
 
     imprimir_tabuleiro(tabuleiro);
-    resolver_sudoku(tabuleiro);
+    int contador = 0;
+    printf("Contador inicio: %d\n", contador);
+    int resolvido = resolver_sudoku(tabuleiro);
+    printf("Contador final: %d\n", contador);
+
     printf("\n\n\n\n");
     imprimir_tabuleiro(tabuleiro);
+
+    if(resolvido) { printf("Resolvido corretamente!\n"); }
+    else { printf("Ocorreu um erro!\n"); }
+}
+
+void testar_tabuleiro_vazio(){
+    int** tabu = criar_tabuleiro();
+    imprimir_tabuleiro(tabu);
+
+    resolver_sudoku(tabu);
+
+    imprimir_tabuleiro(tabu);
 }

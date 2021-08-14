@@ -89,33 +89,42 @@ int verificar_tabuleiro(int** tabuleiro, int linha, int coluna){
 }
 
 void preencher_tabuleiro(int** tabuleiro, int numero_por_grid){
-    int i, j, linha_temp, coluna_temp, numero_temp;
+    int i, j;
     int** tabuleiro_auxiliar = criar_tabuleiro();
-    //srand(time(NULL));
+    srand(time(NULL));
+    int coluna_temp = rand() % 9;
 
-    for(i = 0; i < 3; i++){
-        for(j = 0; j < 3; j++){
+    int para;
+    //Primeiro laço para adicionar em ordem os números
+    imprimir_tabuleiro(tabuleiro_auxiliar);
+    for(i = 1; i <= 1; i++){
+        //Segundo laço para percorrer cada linha
+        for(j = 0; j < 9; j++){
             do{
                 copiar_tabuleiro(tabuleiro, tabuleiro_auxiliar);
-                linha_temp = (i * 3) + (rand() % 3);
-                coluna_temp = (j * 3) + (rand() % 3);
-                numero_temp = (rand() % 9) + 1;
-                tabuleiro_auxiliar[linha_temp][coluna_temp] = numero_temp;
 
-                if(tabuleiro[linha_temp][coluna_temp] == 0 && verificar_tabuleiro(tabuleiro_auxiliar, linha_temp, coluna_temp)){
-                    copiar_tabuleiro(tabuleiro_auxiliar, tabuleiro);
+                coluna_temp = (coluna_temp + 1) % 9;
+                if(tabuleiro_auxiliar[j][coluna_temp] == 0){
+                    tabuleiro_auxiliar[j][coluna_temp] = i;
                 }
-            }while(verificar_quantidade_grid(tabuleiro, i, j) != numero_por_grid);
+
+                if(!verificar_tabuleiro(tabuleiro_auxiliar, j, coluna_temp)){
+                    tabuleiro_auxiliar[j][coluna_temp] = 0;
+                }
+
+            }while(tabuleiro_auxiliar[j][coluna_temp] != i);
+
             copiar_tabuleiro(tabuleiro_auxiliar, tabuleiro);
         }
+        imprimir_tabuleiro(tabuleiro);
     }
 
+    copiar_tabuleiro(tabuleiro_auxiliar, tabuleiro);
     destruir_tabuleiro(tabuleiro_auxiliar);
 }
 
 int resolver_celula(int** tabuleiro_base, int** tabuleiro_resolver, int linha, int coluna){
     //Caso em que estou tratando com um número fixo
-    int valor_atual = tabuleiro_resolver[linha][coluna];
     if(tabuleiro_base[linha][coluna] != 0){
         //Casos diferentes do último elemento da coluna antes do fim da linha
         if(coluna != 8){ return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna + 1); }
@@ -124,7 +133,7 @@ int resolver_celula(int** tabuleiro_base, int** tabuleiro_resolver, int linha, i
         //Último elemento
         return 1;
     }
-
+    imprimir_tabuleiro(tabuleiro_resolver);
     //Caso a tratar números a resolver
     //Primeiro verificar se posso incrementar e manter menor do que 9
     if(tabuleiro_resolver[linha][coluna] < 9){
@@ -146,12 +155,11 @@ int resolver_celula(int** tabuleiro_base, int** tabuleiro_resolver, int linha, i
     return 0;
 }
 
-void resolver_sudoku(int** tabuleiro){
+int resolver_sudoku(int** tabuleiro, int *contador){
     int** tabuleiro_resolver = criar_tabuleiro();
-    int possivel;
     copiar_tabuleiro(tabuleiro, tabuleiro_resolver);
 
-    possivel = resolver_celula(tabuleiro, tabuleiro_resolver, 0, 0);
-    printf("Resultado: %d\n", possivel);
+    int resolvido = resolver_celula(tabuleiro, tabuleiro_resolver, 0, 0);
     copiar_tabuleiro(tabuleiro_resolver, tabuleiro);
+    return resolvido;
 }
