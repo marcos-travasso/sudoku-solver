@@ -37,25 +37,22 @@ int verificar_nova_posicao(int** tabuleiro, int linha, int coluna){
 void gerar_tabuleiro(Tabuleiro* tabuleiro, int dificuldade){
     preencher_tabuleiro(tabuleiro);
 
-    if(dificuldade >= 0 && dificuldade < 9){
-        esconder_numeros(tabuleiro, dificuldade);
-    }
+    esconder_numeros(tabuleiro, dificuldade);
 }
 
 void preencher_tabuleiro(Tabuleiro* tabuleiro){
     int i, j, coluna_temp;
     srand(time(NULL));
 
-    do{
-        for(i = 0; i < 9; i++){
-            for(j = 0; j < 9; j++){
-                coluna_temp = rand() % 9;
-                tabuleiro->base[i][coluna_temp] = rand() % 9 + 1;
+    
+    for(i = 0; i < 9; i++){
+        for(j = 0; j < 9; j++){
+            coluna_temp = rand() % 9;
+            tabuleiro->base[i][coluna_temp] = rand() % 9 + 1;
 
-                if(!verificar_nova_posicao(tabuleiro->base, i, coluna_temp)) { tabuleiro->base[i][coluna_temp] = 0; }
-            }
+            if(!verificar_nova_posicao(tabuleiro->base, i, coluna_temp)) { tabuleiro->base[i][coluna_temp] = 0; }
         }
-    }while(!resolver_sudoku(tabuleiro));
+    }   
 }
 
 int contar_grid(int** tabuleiro, int grid_linha, int grid_coluna){
