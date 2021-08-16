@@ -56,13 +56,3 @@ void imprimir_tabuleiro(int** tabuleiro){
         if((i + 1) % 3 == 0){ printf("-------------------------\n"); }
     }
 }
-
-void limpar_tabuleiro(int** tabuleiro){
-    int i, j;
-
-    for(i = 0; i < 9; i++){
-        for(j = 0; j < 9; j++){
-            tabuleiro[i][j] = 0;
-        }
-    }
-}

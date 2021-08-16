@@ -9,6 +9,7 @@ int main() {
 
     imprimir_tabuleiro(tabuleiro->base);
 
+    destruir_tabuleiro(tabuleiro);
     return 0;
 }
 
