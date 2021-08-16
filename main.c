@@ -1,14 +1,14 @@
 #include <stdio.h>
-#include "tabuleiro.h"
 #include "tabuleiro_testes.h"
 
 int main() {
-    //testar_tabuleiro_vazio();
-    //testar_resolucao();
-    /*int** tabu = criar_tabuleiro();
-    resolver_sudoku(tabu);
-    imprimir_tabuleiro(tabu);*/
-    testar_tabuleiro_vazio();
+    Tabuleiro* tabuleiro = criar_tabuleiro();
+    gerar_tabuleiro(tabuleiro, 5);
+    imprimir_tabuleiro(tabuleiro->base);
+    int a = resolver_sudoku(tabuleiro);
+
+    imprimir_tabuleiro(tabuleiro->base);
+
     return 0;
 }
 

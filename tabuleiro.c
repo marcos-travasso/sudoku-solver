@@ -1,22 +1,33 @@
+/**
+ * Funções referentes a manipulação da matriz do tabuleiro
+ */
+
+#include "tabuleiro.h"
 #include "stdlib.h"
 #include "stdio.h"
-#include "time.h"
 
-int** criar_tabuleiro(){
-    int **tabuleiro = (int**) malloc(sizeof(int*) * 9);
+Tabuleiro* criar_tabuleiro(){
     int i;
+    Tabuleiro* tabuleiro = (Tabuleiro*) malloc(sizeof(Tabuleiro));
+    tabuleiro->base = (int**) malloc(sizeof(int*) * 9);
+    tabuleiro->auxiliar = (int**) malloc(sizeof(int*) * 9);
+
     for(i = 0; i < 9; i++){
-        tabuleiro[i] = (int*) calloc(sizeof(int), 9);
+        tabuleiro->base[i] = (int*) calloc(sizeof(int), 9);
+        tabuleiro->auxiliar[i] = (int*) calloc(sizeof(int), 9);
     }
 
     return tabuleiro;
 }
 
-void destruir_tabuleiro(int** tabuleiro){
+void destruir_tabuleiro(Tabuleiro* tabuleiro){
     int i;
     for(i = 0; i < 9; i++){
-        free(tabuleiro[i]);
+        free(tabuleiro->base[i]);
+        free(tabuleiro->auxiliar[i]);
     }
+    free(tabuleiro->base);
+    free(tabuleiro->auxiliar);
     free(tabuleiro);
 }
 
@@ -46,120 +57,12 @@ void imprimir_tabuleiro(int** tabuleiro){
     }
 }
 
-int verificar_quantidade_grid(int** tabuleiro, int grid_linha, int grid_coluna){
-    int soma = 0, i, j;
-    for(i = 0; i < 3; i++){
-        for(j = 0; j < 3; j++){
-            if(tabuleiro[(grid_linha * 3) + i][(grid_coluna * 3) + j] != 0){
-                soma++;
-            }
-        }
-    }
-    return soma;
-}
-
-int verificar_tabuleiro(int** tabuleiro, int linha, int coluna){
-    int numero_colocado = tabuleiro[linha][coluna];
-    if(numero_colocado == 0) { return 0; }
+void limpar_tabuleiro(int** tabuleiro){
     int i, j;
 
-    //Verificar linha e coluna
     for(i = 0; i < 9; i++){
-        if(tabuleiro[linha][i] == numero_colocado && i != coluna){
-            return 0;
-        }
-        if(tabuleiro[i][coluna] == numero_colocado && i != linha){
-            return 0;
-        }
-    }
-
-    //Verificar grid.
-    //A verificação é feita a numerar os grids usando as posições base (linha e coluna) dividas por 3, para termos a
-    //posição do grid em que o número se encontra.
-    int grid_linha = (linha / 3) * 3;
-    int grid_coluna = (coluna / 3) * 3;
-    for(i = 0; i < 3; i++){
-        for(j = 0; j < 3; j++){
-            if(tabuleiro[grid_linha + i][grid_coluna + j] == numero_colocado && grid_linha + i != linha && grid_coluna + j != coluna){
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
-void preencher_tabuleiro(int** tabuleiro, int numero_por_grid){
-    int i, j;
-    int** tabuleiro_auxiliar = criar_tabuleiro();
-    srand(time(NULL));
-    int coluna_temp = rand() % 9;
-
-    int para;
-    //Primeiro laço para adicionar em ordem os números
-    imprimir_tabuleiro(tabuleiro_auxiliar);
-    for(i = 1; i <= 1; i++){
-        //Segundo laço para percorrer cada linha
         for(j = 0; j < 9; j++){
-            do{
-                copiar_tabuleiro(tabuleiro, tabuleiro_auxiliar);
-
-                coluna_temp = (coluna_temp + 1) % 9;
-                if(tabuleiro_auxiliar[j][coluna_temp] == 0){
-                    tabuleiro_auxiliar[j][coluna_temp] = i;
-                }
-
-                if(!verificar_tabuleiro(tabuleiro_auxiliar, j, coluna_temp)){
-                    tabuleiro_auxiliar[j][coluna_temp] = 0;
-                }
-
-            }while(tabuleiro_auxiliar[j][coluna_temp] != i);
-
-            copiar_tabuleiro(tabuleiro_auxiliar, tabuleiro);
+            tabuleiro[i][j] = 0;
         }
-        imprimir_tabuleiro(tabuleiro);
     }
-
-    copiar_tabuleiro(tabuleiro_auxiliar, tabuleiro);
-    destruir_tabuleiro(tabuleiro_auxiliar);
-}
-
-int resolver_celula(int** tabuleiro_base, int** tabuleiro_resolver, int linha, int coluna){
-    //Caso em que estou tratando com um número fixo
-    if(tabuleiro_base[linha][coluna] != 0){
-        //Casos diferentes do último elemento da coluna antes do fim da linha
-        if(coluna != 8){ return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna + 1); }
-        //Caso em que é o fim da linha
-        else if(linha != 8){ return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha + 1, 0); }
-        //Último elemento
-        return 1;
-    }
-    imprimir_tabuleiro(tabuleiro_resolver);
-    //Caso a tratar números a resolver
-    //Primeiro verificar se posso incrementar e manter menor do que 9
-    if(tabuleiro_resolver[linha][coluna] < 9){
-        (tabuleiro_resolver[linha][coluna])++;
-        //Caso dê certo (não dê conflito na verificação), ele passa pro próximo (se houver próximo)
-        if(verificar_tabuleiro(tabuleiro_resolver, linha, coluna)){
-            int possivel = 0;
-            if(coluna != 8) { possivel = resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna + 1); }
-            else if(linha != 8) { possivel = resolver_celula(tabuleiro_base, tabuleiro_resolver, linha + 1, 0); }
-
-            if(possivel) { return 1; }
-
-        }
-        //Caso não possa ser preenchido com esse valor, a função é chamada novamente para essa posição
-        return resolver_celula(tabuleiro_base, tabuleiro_resolver, linha, coluna);
-    }
-    //Caso já seja 9, ele tem que refazer como 0
-    tabuleiro_resolver[linha][coluna] = 0;
-    return 0;
-}
-
-int resolver_sudoku(int** tabuleiro, int *contador){
-    int** tabuleiro_resolver = criar_tabuleiro();
-    copiar_tabuleiro(tabuleiro, tabuleiro_resolver);
-
-    int resolvido = resolver_celula(tabuleiro, tabuleiro_resolver, 0, 0);
-    copiar_tabuleiro(tabuleiro_resolver, tabuleiro);
-    return resolvido;
 }
