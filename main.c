@@ -2,14 +2,23 @@
 #include "tabuleiro_testes.h"
 
 int main() {
-    Tabuleiro* tabuleiro = criar_tabuleiro();
-    gerar_tabuleiro(tabuleiro, 5);
-    imprimir_tabuleiro(tabuleiro->base);
-    int a = resolver_sudoku(tabuleiro);
+    int dificuldade;
+    do{
+         printf("Digite a quantidade de numeros preenchidos por grid (min: 0, max: 9): ");
+	 scanf("%d", &dificuldade);
+    }while(dificuldade < 0 && dificuldade > 9);
 
+    Tabuleiro* tabuleiro = criar_tabuleiro();
+    gerar_tabuleiro(tabuleiro, dificuldade);
+
+    imprimir_tabuleiro(tabuleiro->base);
+    
+    resolver_sudoku(tabuleiro);
+	
     imprimir_tabuleiro(tabuleiro->base);
 
     destruir_tabuleiro(tabuleiro);
+    
     return 0;
 }
 
