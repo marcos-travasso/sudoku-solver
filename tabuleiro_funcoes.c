@@ -36,10 +36,7 @@ int verificar_nova_posicao(int** tabuleiro, int linha, int coluna){
 
 void gerar_tabuleiro(Tabuleiro* tabuleiro, int dificuldade){
     preencher_tabuleiro(tabuleiro);
-
-    if(dificuldade >= 0 && dificuldade < 9){
-        esconder_numeros(tabuleiro, dificuldade);
-    }
+    esconder_numeros(tabuleiro, dificuldade);
 }
 
 void preencher_tabuleiro(Tabuleiro* tabuleiro){
@@ -75,9 +72,9 @@ void esconder_numeros(Tabuleiro* tabuleiro, int quantidade_por_grid){
 
     for(i = 0; i < 3; i++){
         for(j = 0; j < 3; j++){
-            do{
+            while(contar_grid(tabuleiro->base, i, j) != quantidade_por_grid){
                 tabuleiro->base[(i * 3) + rand() % 3][(j * 3) + rand() % 3] = 0;
-            }while(contar_grid(tabuleiro->base, i, j) != quantidade_por_grid);
+            }
         }
     }
 }
