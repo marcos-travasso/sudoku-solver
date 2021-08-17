@@ -44,7 +44,7 @@ void copiar_tabuleiro(int** tabuleiro_copiado, int** tabuleiro){
 void imprimir_tabuleiro(int** tabuleiro){
     int i, j;
 
-    printf("-------------------------\n");
+    printf("\n-------------------------\n");
 
     for(i = 0; i < 9; i++){
         printf("| ");
@@ -55,4 +55,5 @@ void imprimir_tabuleiro(int** tabuleiro){
         printf("\n");
         if((i + 1) % 3 == 0){ printf("-------------------------\n"); }
     }
+    printf("\n");
 }

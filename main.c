@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "tabuleiro_testes.h"
+#include "tabuleiro_funcoes.h"
 
 int main() {
     int dificuldade;
