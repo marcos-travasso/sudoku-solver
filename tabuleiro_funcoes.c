@@ -72,9 +72,10 @@ void esconder_numeros(Tabuleiro* tabuleiro, int quantidade_por_grid){
 
     for(i = 0; i < 3; i++){
         for(j = 0; j < 3; j++){
-            do{
+		printf("cheguei aqui");
+            while(contar_grid(tabuleiro->base, i, j) != quantidade_por_grid){
                 tabuleiro->base[(i * 3) + rand() % 3][(j * 3) + rand() % 3] = 0;
-            }while(contar_grid(tabuleiro->base, i, j) != quantidade_por_grid);
+            }
         }
     }
 }
